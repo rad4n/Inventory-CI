@@ -16,7 +16,7 @@
 		}
 
 		public function index(){
-			$this->data['form_action'] = $this->module."/search";
+			$this->data['form_action'] = $this->data['module']."/search";
 			$this->load->view('index',$this->data);
 		}
 
@@ -40,7 +40,8 @@
 			$this->data['datareports'] = $this->Mreports->get_report($date_fix_awal,$date_fix_akhir);
 			$this->data['proses'] = "report";
 			$this->data['date'] = date('Y-m-d');
-			$this->data['action_form'] = site_url($this->data['module']."/add_transaction");
+		//	$this->data['action_form'] = site_url($this->data['module']."/add_transaction");
+				$this->data['form_action'] = $this->data['module']."/search";
 			$this->load->view('index',$this->data);
 		}
 	}

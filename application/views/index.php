@@ -59,7 +59,7 @@
     <div id="header-surround"><header id="header">
 
     	<!-- Place your logo here -->
-		<img src="<?=base_url();?>/asset/img/logo.jpg" alt="Grape" class="logo" width="200">
+		<h1 class="logo">Kerendi Developers</h1>
 
 		<!-- Divider between info-button and the toolbar-icons -->
 		<div class="divider-header divider-vertical"></div>

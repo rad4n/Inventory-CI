@@ -12,7 +12,7 @@
 		<div class="block-header">
 			<h1>Pilih Periode Laporan</h1><span></span>
 		</div>
-		<form action="<?=$action_form;?>" method="post" class="block-content form"> <!-- id="validate-form"  -->
+		<form action="<?=$form_action;?>" method="post" class="block-content form"> <!-- id="validate-form"  -->
 
 		<div class="_50">
 			<p><label for="datepicker">Pilih Tanggal Awal</label><input id="datepicker_awal" name="periode_awal" class="required" type="text" value="" /></p>
@@ -35,7 +35,8 @@
 	</div>
 </div>
 
-<?php if ($proses == 'report'){?>
+<?php if(!empty($proses)){
+if ($proses == 'report'){?>
 <div class="grid_12">
 		<div class="block-border">
 			<div class="block-header">
@@ -60,24 +61,36 @@
 						</tr>
 					</thead>
 					<tbody>
-						{section name=datareport loop=$datareport}
+					<?php $total_price=0; $po_pri=0; $pro_f=0; $sub=0; $subtota=0; $no=1; foreach($datareports as $datareport){?>
 						<tr class="gradeX">
-							<td width="10">{$datareport[datareport].no}</td>
-							<td>{$datareport[datareport].sales_date}</td>
-							<td>{$datareport[datareport].product}</td>
-							<td>{$datareport[datareport].category}</td>
-							<td>Rp. {$datareport[datareport].sales_price}</td>
-							<td>{$datareport[datareport].sales_qty}</td>
-							<td>Rp. {$datareport[datareport].subtotal}</td>
-							<td>Rp. {$datareport[datareport].profit}</td>
-							<td>{$datareport[datareport].sales_stock}</td>
+							<td width="10"><?=$no;?></td>
+							<td><?=tgl_indo($datareport['sales_date']);?></td>
+							<td><?=$datareport['product'];?></td>
+							<td><?=$datareport['category'];?></td>
+							<td>Rp. <?=format_rupiah($datareport['sales_price']);?></td>
+							<td><?=$datareport['sales_qty'];?></td>
+							<td>Rp. <?=format_rupiah($datareport['subtotal']);?></td>
+							<td>Rp. <?=format_rupiah($datareport['profit']);?></td>
+							<td><?=$datareport['sales_stock'];?></td>
 						</tr>
-						{/section}
+						<?php $no++;
+							$total_price += $datareport['sales_price'];
+							$totalprice = format_rupiah($total_price);
+
+							$po_pri += $datareport['po_price'];
+							$popri = format_rupiah($po_pri);
+
+							$pro_f += $datareport['profit'];
+							$pro = format_rupiah($pro_f);
+
+							$sub += $datareport['subtotal'];
+							$subtota = format_rupiah($sub);
+						}?>
 						<tr>
 							<td colspan="4"></td>
 							<td colspan="2"><b>Total Transaksi</b></td>
-							<td><b>Rp. {$subtota}</b></td>
-							<td><b>Rp. {$pro}</b></td>
+							<td><b>Rp. <?=$subtota;?></b></td>
+							<td><b>Rp. <?=$pro;?></b></td>
 							<td></td>
 						</tr>
 					</tbody>
@@ -85,4 +98,4 @@
 			</div>
 		</div>
 	</div>
-<?php } ?>
+<?php }} ?>

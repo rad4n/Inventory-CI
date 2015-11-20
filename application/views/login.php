@@ -43,7 +43,7 @@
 				<input type="password" name="pass" class="required">
 			</p>
 			<p>
-				<label> Copyright &copy; 2012 ASFA Solution<br>Best solution for your business <br>
+				<label> Copyright &copy; 2015 Krendi Developers<br>Connecting Inovation<br>
 					Point of Sales Application Ver 1.0.
 				</label>
 			</p>
