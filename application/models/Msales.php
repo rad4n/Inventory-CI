@@ -18,16 +18,29 @@
     private function cek_stock($product){
       	$sql 	= "SELECT * FROM aj_products WHERE product_id = '$product'";
         $data = $this->db->query($sql)->row_array();
-        //$stock = $data['stock'];
         return $data;
     }
 
     public function add($data){
       $product	= $data['product'];
-    	$price		= $data['harga'];
-    	$qty		= $data['qty'];
-    	$description= $data['description'];
       $stock = $this->cek_stock($product);
+      //masih pertanyaan apakah $price otomatis dari sistem atau bisa di tentukan....
+      //berikut logika bila ada diskon pada produk tersebut maka $price diambil dari tabel product yang sudah di discount
+      if(!empty($stock['qty_product_disc']) AND $stock['qty_product_disc']>0){
+          $price   = $stock['price'];//ambil harga dari tabel product yang telah di discount sebelumnya
+          $sisa_stok_discount = $stock['qty_product_disc'] - $data['qty'];
+          $data = array(
+                  'qty_product_disc' => $sisa_stok_discount
+          );
+          //update tabel product untuk perubahan field disc_qty
+          $this->db->where('product_id', $id);
+          $this->db->update('aj_products', $data);
+      }
+    	else{
+          $price		= $data['harga'];
+      }
+    	$qty		     = $data['qty'];
+    	$description = $data['description'];
       //print_r($stock); exit;
       $subtotal= $price * $qty;
       $profit	= ($price * $qty) - ($stock['po_price'] * $qty);
@@ -38,27 +51,31 @@
         return false;
       }
       else {
-       $sql = "INSERT INTO aj_sales_transaction (	product_id,
-   														sales_price,
-   														profit,
-   														sales_qty,
-   														sales_stock,
-   														subtotal,
-   														sales_date,
-   														sales_time,
-   														description,
-   														user_id)
-   												VALUES(	'$product',
-   														'$price',
-   														'$profit',
-   														'$qty',
-   														'$sales_stock',
-   														'$subtotal',
-   														'$sales_date',
-   														'$hour',
-   														'$description',
-   														'')";
-      $this->db->query($sql);
+         $sql = "INSERT INTO aj_sales_transaction (	product_id,
+     														sales_price,
+     														profit,
+     														sales_qty,
+     														sales_stock,
+     														subtotal,
+     														sales_date,
+     														sales_time,
+     														description,
+     														user_id)
+     												VALUES(	'$product',
+     														'$price',
+     														'$profit',
+     														'$qty',
+     														'$sales_stock',
+     														'$subtotal',
+     														'$sales_date',
+     														'$hour',
+     														'$description',
+     														'')";
+        $this->db->query($sql);
+
+        $sql2 = "UPDATE aj_products SET stock = '$sales_stock' WHERE product_id = '$product_id'";
+
+        $this->db->query($sql2);
       }
     }
     public function update($data,$id){

@@ -56,4 +56,36 @@
       $this->db->query($sql2);
 
     }
+    //jalankan fungsi dibawah ini dengan cron jobs
+    public function get_product_disc(){
+      $sql = "SELECT supp_qty,
+                     trx_id,
+                     product_id,
+                     supp_price,
+                     DATE_ADD(buys_date,INTERVAL 60 DAY) AS datedisc
+              FROM aj_supp_transaction
+              WHERE disc = 'Y'";
+      $result = $this->db->query($sql);
+      if($result->num_rows()>0){
+        foreach($result->result_array() as $row){
+            $price_disc = $row['supp_price'] - (($row['supp_price']*20)/100);
+
+            //update tabel qty_product_disc di table product
+            $data = array(
+                    'price'            => $price_disc,
+                    'qty_product_disc' => $row['supp_qty']
+            );
+
+            $this->db->where('product_id', $row['product_id']);
+            $this->db->update('aj_products', $data);
+
+            $data2 = array(
+                    'disc'  => "Y"
+            );
+
+            $this->db->where('trx_id', $row['trx_id']);
+            $this->db->update('aj_products', $data2);
+        }
+      }
+    }
   }
